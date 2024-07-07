@@ -1,12 +1,17 @@
 #!/bin/bash
 
 finish () {
-    wg-quick down wg0
+    for conf in /etc/wireguard/*.conf; do
+        interface=$(basename "${conf}" .conf)
+        wg-quick down "${interface}"
+    done
     exit 0
 }
 trap finish SIGTERM SIGINT SIGQUIT
 
-wg-quick up /etc/wireguard/wg0.conf
+for conf in /etc/wireguard/*.conf; do
+    wg-quick up "${conf}"
+done
 
 # Infinite sleep
 sleep infinity &
